@@ -1,15 +1,3 @@
-// Aggiungere la validazione in tempo reale dei seguenti campi:
-
-// ✅ Username: Deve contenere solo caratteri alfanumerici e almeno 6 caratteri (no spazi o simboli).
-
-// ✅ Password: Deve contenere almeno 8 caratteri, 1 lettera, 1 numero e 1 simbolo.
-
-// ✅ Descrizione: Deve contenere tra 100 e 1000 caratteri (senza spazi iniziali e finali).
-
-// Suggerimento: Per semplificare la validazione, puoi definire tre stringhe con i caratteri validi e
-//  usare .includes() per controllare se i caratteri appartengono a una di queste categorie:
-
-
 import { useMemo, useState } from 'react';
 
 function App() {
@@ -57,7 +45,10 @@ function App() {
       !specialization.trim() ||
       !experience.trim() ||
       experience <= 0 ||
-      !description.trim()
+      !description.trim() ||
+      !isUsernameValid ||
+      !isPasswordValid ||
+      !isDescriptionValid
     ) {
       alert('Per favore compila tutti i campi correttamente.');
       return;
