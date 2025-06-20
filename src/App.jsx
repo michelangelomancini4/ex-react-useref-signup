@@ -1,43 +1,56 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useRef } from 'react';
 
 function App() {
-  const [fullName, setFullName] = useState('');
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [specialization, setSpecialization] = useState('');
-  const [experience, setExperience] = useState('');
-  const [description, setDescription] = useState('');
 
+  // Controlled state for input values
+  const [username, setUsername] = useState('mike1212');
+  const [password, setPassword] = useState('mike1212!');
+  const [description, setDescription] = useState('Un developer appassionato!');
 
+  // Characters allowed in the validation
   const letters = "abcdefghijklmnopqrstuvwxyz";
   const numbers = "0123456789";
   const symbols = "!@#$%^&*()-_=+[]{}|;:'\\,.<>?/`~";
 
+  // Refs for uncontrolled fields 
+  const fullNameRef = useRef();
+  const specializationRef = useRef();
+  const experienceRef = useRef();
+
+  console.log('rendering');
+
+  // Check if the username is valid (letters or numbers, at least 6 characters)
   const isUsernameValid = useMemo(() => {
-
-    const validUsername = username.split("").every(char => letters.includes(char.toLowerCase()) || numbers.includes(char))
+    const validUsername = username.split("").every(char =>
+      letters.includes(char.toLowerCase()) || numbers.includes(char)
+    );
     return validUsername && username.length >= 6;
-
   }, [username]);
 
-
+  // Check if the password is valid: - at least 6 characters ,includes at least 1 letter, 1 number, and 1 symbol
   const isPasswordValid = useMemo(() => {
-    return password.length >= 6 && password.split("").some(char => letters.includes(char)) &&
+    return password.length >= 6 &&
+      password.split("").some(char => letters.includes(char)) &&
       password.split("").some(char => numbers.includes(char)) &&
-      password.split("").some(char => symbols.includes(char))
-
-
+      password.split("").some(char => symbols.includes(char));
   }, [password]);
 
+  // Check if the description is between 10 and 1000 characters
   const isDescriptionValid = useMemo(() => {
-
     return description.trim().length >= 10 &&
-      description.trim().length <= 1000
-  }, [description])
+      description.trim().length <= 1000;
+  }, [description]);
 
-
+  // Function that runs when the form is submitted
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    // Get values from uncontrolled inputs 
+    const fullName = fullNameRef.current.value;
+    const specialization = specializationRef.current.value;
+    const experience = experienceRef.current.value;
+
+    // Validate all fields before submitting
     if (
       !fullName.trim() ||
       !username.trim() ||
@@ -53,6 +66,8 @@ function App() {
       alert('Per favore compila tutti i campi correttamente.');
       return;
     }
+
+    // Create the object to send or save
     const formData = {
       fullName,
       username,
@@ -62,7 +77,7 @@ function App() {
       description,
     };
 
-
+    // Print the user data to the console
     console.log('Dati utente registrato:', formData);
   };
 
@@ -75,9 +90,7 @@ function App() {
           Nome completo:
           <input
             type="text"
-            value={fullName}
-            onChange={(e) => setFullName(e.target.value)}
-
+            ref={fullNameRef}
           />
         </label>
 
@@ -88,6 +101,7 @@ function App() {
             value={username}
             onChange={(e) => setUsername(e.target.value)}
           />
+          {/* Show validation messages for username */}
           {username && !isUsernameValid && (
             <p className="invalid">
               Solo lettere e numeri, almeno 6 caratteri.
@@ -100,7 +114,6 @@ function App() {
           )}
         </label>
 
-
         <label>
           Password:
           <input
@@ -108,6 +121,7 @@ function App() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
+          {/* Show validation messages for password */}
           {password && !isPasswordValid && (
             <p className="invalid">
               Almeno 6 caratteri, 1 lettera, 1 numero, 1 simbolo.
@@ -122,10 +136,8 @@ function App() {
 
         <label>
           Specializzazione:
-          <select
-            value={specialization}
-            onChange={(e) => setSpecialization(e.target.value)}
-          >
+          <select ref={specializationRef}>
+            <option value="">Scegli </option>
             <option value="Full Stack">Full Stack</option>
             <option value="Frontend">Frontend</option>
             <option value="Backend">Backend</option>
@@ -136,8 +148,7 @@ function App() {
           Anni di esperienza:
           <input
             type="number"
-            value={experience}
-            onChange={(e) => setExperience(e.target.value)}
+            ref={experienceRef}
           />
         </label>
 
@@ -147,6 +158,7 @@ function App() {
             value={description}
             onChange={(e) => setDescription(e.target.value)}
           />
+          {/* Show validation messages for description */}
           {description && !isDescriptionValid && (
             <p className="invalid">
               Deve contenere tra 100 e 1000 caratteri.
